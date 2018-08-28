@@ -33,6 +33,6 @@ Usage
 
 Syntax:
 
-	check_phishtank '<url>'
+	check_virustotal '<url>'
 
 `<url>` is the complete URL to check, including protocol
