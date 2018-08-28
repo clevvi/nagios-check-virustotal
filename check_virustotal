@@ -1,0 +1,45 @@
+#!/usr/bin/python
+import requests, sys, json;
+
+api_key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+url=sys.argv[1]
+
+threshold_critical = 5
+threshold_warn = 1
+
+headers = {
+  "Accept-Encoding": "gzip, deflate",
+  "User-Agent" : "gzip,  nagios check_virustotal plugin"
+}
+
+response = requests.get('https://www.virustotal.com/vtapi/v2/url/report?apikey='+api_key+'&resource='+url, headers=headers)
+
+if response.status_code == 204:
+	print "UNKNOWN: number of API calls allowed has been exceeded"
+	sys.exit(3)
+if response.status_code != requests.codes.ok:
+	print "UNKNOWN: API call returned " + str(response.status_code)
+	sys.exit(3)
+
+json_response = response.json()
+
+error_str = "as at "+json_response['scan_date']
+comma = " "
+
+for site, detail in json_response['scans'].iteritems():
+	if detail['detected']:
+		error_str = error_str + comma + site +" says "+detail['result']
+		comma = ", "
+
+if json_response['positives'] >= threshold_critical:
+	print "CRITICAL: " + str(json_response['positives']) + " detections " + error_str
+	sys.exit(2)
+elif json_response['positives'] >= threshold_warn:
+	print "WARNING: " + str(json_response['positives']) + " detections " + error_str
+	sys.exit(1)
+elif json_response['positives'] < threshold_warn:
+	print "OK: no detections " + error_str
+	sys.exit(0)
+
+print "UNKNOWN: check script error"
+sys.exit(3)
