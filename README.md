@@ -25,7 +25,7 @@ The configuration variables at the top of the script determine:
 * Nagios "critical" threshold (threshold_critical)
 * Nagios "warning" threshold (threshold_warn)
 
-The Phishtank API key can be obtained for free at: https://www.virustotal.com/#/join-us.
+The VirusTotal API key can be obtained for free at: https://www.virustotal.com/#/join-us.
 
 
 Usage
